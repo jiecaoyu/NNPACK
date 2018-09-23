@@ -465,6 +465,9 @@ def main(args):
             build.executable("convolution-benchmark",
                 [build.cc("convolution.c")] + support_objects)
 
+            build.executable("correctness-check-wt6x6",
+                [build.cc("correctness_check_wt6x6.c")] + support_objects)
+
             if not options.convolution_only:
                 build.executable("fully-connected-benchmark",
                     [build.cc("fully-connected.c")] + support_objects)
