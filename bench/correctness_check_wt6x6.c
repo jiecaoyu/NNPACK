@@ -228,7 +228,7 @@ struct nnp_profile convolution_check(
             exit(EXIT_FAILURE);
         }
     }
-    read_memory(memory, cache_size);
+    // read_memory(memory, cache_size);
     const struct nnp_size output_size = {
         .height = (input_size.height + 1 - kernel_size.height) / output_subsampling.height,
         .width = (input_size.width + 1 - kernel_size.width) / output_subsampling.width
