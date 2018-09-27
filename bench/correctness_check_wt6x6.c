@@ -49,7 +49,7 @@ static void FullFill(float input[], float kernel[],
     }
     for (size_t kernelIter = 0;
             kernelIter < output_channels * input_channels 
-            * input_size.height * input_size.width;
+            * kernel_size.height * kernel_size.width;
             kernelIter++) {
         kernel[kernelIter] = ((float)(rand()) / RAND_MAX) * 2.0 - 1.0;
     }
