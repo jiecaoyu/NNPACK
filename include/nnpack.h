@@ -118,6 +118,9 @@ enum nnp_convolution_algorithm {
 	 * on non-supported processors falls back to nnp_convolution_algorithm_wt8x8.
 	 */
 	nnp_convolution_algorithm_wt8x8_fp16 = 6,
+
+        /** Tiled convolution based on 2D Winograd transform F(3x3, 4x4) with 6x6 blocks. Supports only 3x3 kernels */
+        nnp_convolution_algorithm_wt6x6 = 517,
 };
 
 enum nnp_convolution_transform_strategy {

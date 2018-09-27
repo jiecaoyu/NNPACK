@@ -405,6 +405,9 @@ static void init_hwinfo(void) {
 			nnp_hwinfo.transforms.iwt_f6x6_3x3_with_offset_and_store = (nnp_transform_2d_with_offset) nnp_iwt8x8_3x3_with_offset__neon;
 			nnp_hwinfo.transforms.iwt_f6x6_3x3_with_offset_and_stream = (nnp_transform_2d_with_offset) nnp_iwt8x8_3x3_with_offset__neon;
 			nnp_hwinfo.transforms.kwt_f6x6_3x3 = (nnp_transform_2d_with_offset) nnp_kwt8x8_3x3__neon;
+
+			nnp_hwinfo.transforms.iwt_f4x4_3x3_with_offset_and_stream = (nnp_transform_2d_with_offset) nnp_iwt6x6_3x3_with_offset__neon;
+			nnp_hwinfo.transforms.kwt_f4x4_3x3 = (nnp_transform_2d_with_offset) nnp_kwt6x6_3x3__neon;
 #if !NNP_INFERENCE_ONLY
 			nnp_hwinfo.transforms.kwt_f6x6_3Rx3R = (nnp_transform_2d_with_offset) nnp_kwt8x8_3Rx3R__neon;
 			nnp_hwinfo.transforms.owt_f6x6_3x3 = (nnp_transform_2d_with_offset) nnp_owt8x8_3x3__neon;
@@ -413,6 +416,11 @@ static void init_hwinfo(void) {
 			nnp_hwinfo.transforms.owt_f6x6_3x3_with_bias_with_relu = (nnp_transform_2d_with_bias) nnp_owt8x8_3x3_with_bias_with_relu__neon;
 			nnp_hwinfo.transforms.owt_f6x6_3x3s2_with_bias = (nnp_transform_2d_with_bias) nnp_owt8x8_3x3s2_with_bias__neon;
 			nnp_hwinfo.transforms.owt_f6x6_3x3s2_with_bias_with_relu = (nnp_transform_2d_with_bias) nnp_owt8x8_3x3s2_with_bias_with_relu__neon;
+
+                        nnp_hwinfo.transforms.owt_f4x4_3x3_with_bias = (nnp_transform_2d_with_bias) nnp_owt6x6_3x3_with_bias__neon;
+			nnp_hwinfo.transforms.owt_f4x4_3x3_with_bias_with_relu = (nnp_transform_2d_with_bias) nnp_owt6x6_3x3_with_bias_with_relu__neon;
+			nnp_hwinfo.transforms.owt_f4x4_3x3s2_with_bias = (nnp_transform_2d_with_bias) nnp_owt6x6_3x3s2_with_bias__neon;
+			nnp_hwinfo.transforms.owt_f4x4_3x3s2_with_bias_with_relu = (nnp_transform_2d_with_bias) nnp_owt6x6_3x3s2_with_bias_with_relu__neon;
 			if (cpuinfo_has_arm_neon_fp16()) {
 				nnp_hwinfo.transforms.iwt_f6x6_3x3_fp16_with_offset = (nnp_transform_2d_with_offset) nnp_iwt8x8_3x3_fp16_with_offset__neonhp;
 				nnp_hwinfo.transforms.kwt_f6x6_3x3_fp16 = (nnp_transform_2d_with_offset) nnp_kwt8x8_3x3_fp16__neonhp;

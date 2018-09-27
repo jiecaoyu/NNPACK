@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <fxdiv.h>
 
@@ -1163,6 +1164,46 @@ enum nnp_status nnp_convolution_inference(
 					NNP_UNREACHABLE;
 			}
 			break;
+                case nnp_convolution_algorithm_wt6x6:
+                        if (kernel_size.height != 3 || kernel_size.width != 3) {
+                            status = nnp_status_unsupported_algorithm;
+                            goto cleanup;
+                        }
+                        tile_size = (struct nnp_size) { .height = 6, .width = 6 };
+                        transform_element_size = sizeof(float);
+                        fourier_transform = false;
+
+                        input_transform_function =
+                            nnp_hwinfo.transforms.iwt_f4x4_3x3_with_offset_and_stream;
+                        kernel_transform_function =
+                            nnp_hwinfo.transforms.kwt_f4x4_3x3;
+                        switch (activation) {
+                            case nnp_activation_identity:
+                                if (output_subsampling.height == 1 &&
+                                        output_subsampling.width == 1) {
+                                    output_transform_function =
+                                        nnp_hwinfo.transforms.owt_f4x4_3x3_with_bias;
+                                } else if (output_subsampling.height == 2 &&
+                                        output_subsampling.width == 2) {
+                                    output_transform_function =
+                                        nnp_hwinfo.transforms.owt_f4x4_3x3s2_with_bias;
+                                }
+                                break;
+                            case nnp_activation_relu:
+                                if (output_subsampling.height == 1 &&
+                                        output_subsampling.width == 1) {
+                                    output_transform_function =
+                                        nnp_hwinfo.transforms.owt_f4x4_3x3_with_bias_with_relu;
+                                } else if (output_subsampling.height == 2 &&
+                                        output_subsampling.width == 2) {
+                                    output_transform_function =
+                                        nnp_hwinfo.transforms.owt_f4x4_3x3s2_with_bias_with_relu;
+                                }
+                                break;
+                            default:
+                                NNP_UNREACHABLE;
+                        }
+                        break;
 		case nnp_convolution_algorithm_ft8x8:
 			if (max(kernel_size.height, kernel_size.width) > 8) {
 				status = nnp_status_unsupported_algorithm;
@@ -1237,6 +1278,7 @@ enum nnp_status nnp_convolution_inference(
 	switch (algorithm) {
 		case nnp_convolution_algorithm_wt8x8:
 		case nnp_convolution_algorithm_wt8x8_fp16:
+		case nnp_convolution_algorithm_wt6x6:
 		case nnp_convolution_algorithm_ft8x8:
 		case nnp_convolution_algorithm_ft16x16:
 			if (input_transform_function == NULL || kernel_transform_function == NULL || output_transform_function == NULL) {

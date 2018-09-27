@@ -144,6 +144,8 @@ def main(args):
                     build.cc("psimd/2d-fourier-16x16.c"),
                     build.cc("neon/2d-winograd-8x8-3x3.c"),
                     build.cc("neon/2d-winograd-8x8-3x3-fp16.c"),
+
+                    build.cc("neon/2d-winograd-6x6-3x3.c"),
                     # Tuple GEMM
                     build.cc("neon/blas/h4gemm.c"),
                     build.cc("neon/blas/s4gemm.c"),

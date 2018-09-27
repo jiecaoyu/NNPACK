@@ -121,13 +121,13 @@ struct nnp_profile convolution_check(
 {
     // initialize input and kernel tensor
     FullFill(input, kernel, input_channels, output_channels, input_size, kernel_size);
-    // PrintTensor(input,
-    //         (size_t[]){input_channels, input_size.height, input_size.width},
-    //         3, (char[]){"Input"});
-    // PrintTensor(kernel,
-    //         (size_t[]){output_channels, input_channels,
-    //         kernel_size.height, kernel_size.width},
-    //         4, (char[]){"Kernel"});
+    PrintTensor(input,
+            (size_t[]){input_channels, input_size.height, input_size.width},
+            3, (char[]){"Input"});
+    PrintTensor(kernel,
+            (size_t[]){output_channels, input_channels,
+            kernel_size.height, kernel_size.width},
+            4, (char[]){"Kernel"});
     struct nnp_profile computation_profile[max_iterations];
     enum nnp_status status = nnp_status_success;
     void* memory_block = NULL;
@@ -139,7 +139,7 @@ struct nnp_profile convolution_check(
     }
 
     nnp_convolution_inference(
-            algorithm, transform_strategy=nnp_convolution_transform_strategy_compute,
+            nnp_convolution_algorithm_implicit_gemm, transform_strategy=nnp_convolution_transform_strategy_compute,
             input_channels, output_channels,
             input_size, input_padding, kernel_size, output_subsampling,
             input, kernel, bias,
@@ -234,9 +234,9 @@ struct nnp_profile convolution_check(
         .width = (input_size.width + 1 - kernel_size.width) / output_subsampling.width
     };
     
-    // PrintTensor(output_ref,
-    //         (size_t[]){output_channels, output_size.height, output_size.width},
-    //         3, (char[]){"Output Ref"});
+    PrintTensor(output_ref,
+            (size_t[]){output_channels, output_size.height, output_size.width},
+            3, (char[]){"Output Ref"});
 
     nnp_convolution_inference(
             algorithm, transform_strategy,
@@ -247,9 +247,9 @@ struct nnp_profile convolution_check(
             memory_block, memory_size == 0 ? NULL : &memory_size,
             nnp_activation_identity, NULL,
             threadpool, NULL);
-    // PrintTensor(output_new,
-    //         (size_t[]){output_channels, output_size.height, output_size.width},
-    //         3, (char[]){"Output New"});
+    PrintTensor(output_new,
+            (size_t[]){output_channels, output_size.height, output_size.width},
+            3, (char[]){"Output New"});
 
     float diff = 0.0;
     for (size_t outputIter = 0;
@@ -292,7 +292,7 @@ static void print_options_help(const char* program_name) {
             "  -ks  --kernel-size        Kernel height and width\n"
             "Optional parameters:\n"
             "  -m   --mode               The convolution mode (output, inference, input-gradient, kernel-gradient)\n"
-            "  -a   --algorithm          The algorithm (auto, ft8x8, ft16x16, wt8x8, implicit-gemm, or direct) for computing convolution (default: auto)\n"
+            "  -a   --algorithm          The algorithm (auto, ft8x8, ft16x16, wt8x8, wt6x6, implicit-gemm, or direct) for computing convolution (default: auto)\n"
             "  -ts  --transform-strategy The transformation strategy (compute, or precompute) for kernel transformation (default: compute)\n"
             "  -b   --batch              The size of a minibatch (default: 1)\n"
             "  -s   --output-subsampling The size of a output subsampling region, AKA stride (default: 1x1)\n"
@@ -450,6 +450,8 @@ static struct options parse_options(int argc, char** argv) {
                 options.algorithm = nnp_convolution_algorithm_ft16x16;
             } else if (strcmp(argv[argi + 1], "wt8x8") == 0) {
                 options.algorithm = nnp_convolution_algorithm_wt8x8;
+            } else if (strcmp(argv[argi + 1], "wt6x6") == 0) {
+                options.algorithm = nnp_convolution_algorithm_wt6x6;
             } else if (strcmp(argv[argi + 1], "implicit-gemm") == 0) {
                 options.algorithm = nnp_convolution_algorithm_implicit_gemm;
             } else if (strcmp(argv[argi + 1], "direct") == 0) {
@@ -612,6 +614,11 @@ int main(int argc, char** argv) {
             tile_size = (struct nnp_size) { 8, 8 };
             flops_per_element = 2.0;
             printf("Algorithm: WT8x8 (FP16)\n");
+            break;
+        case nnp_convolution_algorithm_wt6x6:
+            tile_size = (struct nnp_size) { 6, 6 };
+            flops_per_element = 2.0;
+            printf("Algorithm: WT6x6\n");
             break;
         case nnp_convolution_algorithm_implicit_gemm:
             tile_size = (struct nnp_size) { 1, 1 };
