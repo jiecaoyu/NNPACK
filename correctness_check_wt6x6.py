@@ -16,6 +16,7 @@ test_pool = [
         [ 1, 1, 4, 4, 3, 3, 1, 'wt6x6', 'compute'],
         [ 2, 3, 4, 4, 3, 3, 1, 'wt6x6', 'precompute'],
         [ 131, 41, 32, 32, 3, 3, 1, 'wt6x6', 'precompute'],
+        [ 256, 256, 32, 32, 3, 3, 1, 'wt6x6', 'precompute'],
         ]
 for setting in test_pool:
     inst = './bin/correctness-check-wt6x6'
