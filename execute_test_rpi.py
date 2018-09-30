@@ -21,6 +21,8 @@ test_pool = [
         [ 256, 256, 32, 32, 3, 3, 50, 'implicit-gemm', 'compute'],
         [ 256, 256, 32, 32, 3, 3, 50, 'wt8x8', 'compute'],
         [ 256, 256, 32, 32, 3, 3, 50, 'wt8x8', 'precompute'],
+        [ 256, 256, 32, 32, 3, 3, 50, 'wt6x6', 'compute'],
+        [ 256, 256, 32, 32, 3, 3, 50, 'wt6x6', 'precompute'],
         ]
 for setting in test_pool:
     inst = './bin/convolution-benchmark'
