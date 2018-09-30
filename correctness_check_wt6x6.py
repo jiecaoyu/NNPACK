@@ -13,9 +13,9 @@ subprocess.call('ninja', shell=True)
 # Run the bin/correctness-check-wt6x6
 ## example : ./bin/correctness-check-wt6x6  -ic 9 -oc 16 -is 14 14 -ks 2 2  -m inference -i 40
 test_pool = [
-        [ 2, 3, 4, 4, 3, 3, 1, 'wt6x6', 'compute'],
-        # [ 2, 3, 4, 4, 3, 3, 1, 'wt8x8', 'precompute'],
-        # [ 131, 41, 31, 32, 3, 3, 1, 'wt8x8', 'precompute'],
+        [ 1, 1, 4, 4, 3, 3, 1, 'wt6x6', 'compute'],
+        [ 2, 3, 4, 4, 3, 3, 1, 'wt6x6', 'precompute'],
+        [ 131, 41, 32, 32, 3, 3, 1, 'wt6x6', 'precompute'],
         ]
 for setting in test_pool:
     inst = './bin/correctness-check-wt6x6'

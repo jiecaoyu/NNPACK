@@ -34,7 +34,7 @@ enum mode {
     mode_inference,
 };
 
-static void FullFill(float input[], float kernel[],
+static void FullFill(float input[], float kernel[], float bias[],
         size_t input_channels,
         size_t output_channels,
         struct nnp_size input_size,
@@ -52,6 +52,9 @@ static void FullFill(float input[], float kernel[],
             * kernel_size.height * kernel_size.width;
             kernelIter++) {
         kernel[kernelIter] = ((float)(rand()) / RAND_MAX) * 2.0 - 1.0;
+    }
+    for (size_t biasIter = 0; biasIter < output_channels; biasIter++) {
+        bias[biasIter] = ((float)(rand()) / RAND_MAX) * 2.0 - 1.0;
     }
     return;
 }
@@ -113,21 +116,21 @@ struct nnp_profile convolution_check(
         struct nnp_size output_subsampling,
         float input[],
         float kernel[],
-        const float bias[],
+        float bias[],
         float output_ref[],
         float output_new[],
         pthreadpool_t threadpool,
         size_t max_iterations)
 {
     // initialize input and kernel tensor
-    FullFill(input, kernel, input_channels, output_channels, input_size, kernel_size);
-    PrintTensor(input,
-            (size_t[]){input_channels, input_size.height, input_size.width},
-            3, (char[]){"Input"});
-    PrintTensor(kernel,
-            (size_t[]){output_channels, input_channels,
-            kernel_size.height, kernel_size.width},
-            4, (char[]){"Kernel"});
+    FullFill(input, kernel, bias, input_channels, output_channels, input_size, kernel_size);
+    // PrintTensor(input,
+    //         (size_t[]){input_channels, input_size.height, input_size.width},
+    //         3, (char[]){"Input"});
+    // PrintTensor(kernel,
+    //         (size_t[]){output_channels, input_channels,
+    //         kernel_size.height, kernel_size.width},
+    //         4, (char[]){"Kernel"});
     struct nnp_profile computation_profile[max_iterations];
     enum nnp_status status = nnp_status_success;
     void* memory_block = NULL;
@@ -234,9 +237,9 @@ struct nnp_profile convolution_check(
         .width = (input_size.width + 1 - kernel_size.width) / output_subsampling.width
     };
     
-    PrintTensor(output_ref,
-            (size_t[]){output_channels, output_size.height, output_size.width},
-            3, (char[]){"Output Ref"});
+    // PrintTensor(output_ref,
+    //         (size_t[]){output_channels, output_size.height, output_size.width},
+    //         3, (char[]){"Output Ref"});
 
     nnp_convolution_inference(
             algorithm, transform_strategy,
@@ -247,9 +250,9 @@ struct nnp_profile convolution_check(
             memory_block, memory_size == 0 ? NULL : &memory_size,
             nnp_activation_identity, NULL,
             threadpool, NULL);
-    PrintTensor(output_new,
-            (size_t[]){output_channels, output_size.height, output_size.width},
-            3, (char[]){"Output New"});
+    // PrintTensor(output_new,
+    //         (size_t[]){output_channels, output_size.height, output_size.width},
+    //         3, (char[]){"Output New"});
 
     float diff = 0.0;
     for (size_t outputIter = 0;
