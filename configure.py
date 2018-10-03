@@ -28,6 +28,7 @@ def main(args):
             backend = "psimd"
 
     build = confu.Build.from_options(options)
+    build.toolchain.optflag = "-O3"
 
     macros = dict()
     if backend == "psimd":
@@ -387,6 +388,10 @@ def main(args):
             reference_layer_objects + [build.cxx("convolution-inference/vgg-a.cc")])
         build.unittest("convolution-inference-overfeat-fast-test",
             reference_layer_objects + [build.cxx("convolution-inference/overfeat-fast.cc")])
+
+        # resnet model
+        build.unittest("resnet-inference-test",
+            reference_layer_objects + [build.cxx("resnet/resnet.cc")])
 
         if not options.convolution_only:
             build.unittest("fully-connected-inference-alexnet-test",
