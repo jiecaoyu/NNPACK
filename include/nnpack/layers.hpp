@@ -31,13 +31,13 @@ class Layer {
         std::cerr << "Error: wrong initPara" << std::endl;
         exit(1);
         return;
-    };
+    }
 
     virtual DataType* getOutput() {
         std::cerr << "Error: wrong getOutput" << std::endl;
         exit(1);
         return NULL;
-    };
+    }
 };
 
 /*
@@ -98,6 +98,7 @@ class ConvLayer: public Layer {
         _output = new DataType[output_channels
             * _output_size.height * _output_size.width];
     }
+
     virtual void forward() {
         std::cout << "==> Layer " << _name << " forward" << std::endl;
         enum nnp_status status = nnp_status_success;
@@ -116,7 +117,7 @@ class ConvLayer: public Layer {
                 << _name << "] failed" << std::endl;
             exit(1);
         }
-    };
+    }
 
     virtual void initPara(const string para_path) {
         std::cout << "==> Initializing Layer [" << _name << "] with data "\
@@ -133,7 +134,7 @@ class ConvLayer: public Layer {
             exit(1);
         }
         return;
-    };
+    }
 
     virtual DataType* getOutput() {
         return _output;
@@ -172,9 +173,10 @@ class DataLayer: public Layer {
             * _input_size.height * _input_size.width];
         _name = name;
     }
+
     virtual void forward() {
         std::cout << "==> Layer " << _name << " forward" << std::endl;
-    };
+    }
 
     virtual void fetchData() {
         std::cout << "==> Fetch the input data" << std::endl;
@@ -207,7 +209,6 @@ class DataLayer: public Layer {
     }
 };
 
-
 /*
  * *********************
  * Network
@@ -224,7 +225,7 @@ class Net {
         void addLayer(Layer* layer) {
             layers.push_back(layer);
             return;
-        };
+        }
 
         void forward() {
             std::cout << "==> Forwarding Model\n";
@@ -232,7 +233,7 @@ class Net {
                 layer->forward();
             }
             return;
-        };
+        }
 
         void initPara(const string model_para_path) {
             std::cout << "==> Initializing Model\n";
@@ -241,7 +242,7 @@ class Net {
                     layer->initPara(model_para_path + "/" + layer->_name);
             }
             return;
-        };
+        }
 
         void prepareComputation() {
             enum nnp_status init_status = nnp_initialize();
