@@ -45,7 +45,7 @@ void BuildModel(Net& model, const struct options& options ) {
     
     // first conv layer
     ConvLayer* conv1 = new ConvLayer(data_layer->_output,
-            3, 64, 224, 3, 7, 2, "conv1");
+            3, 64, 224, 3, 7, 2, true, "conv1");
     model.addLayer(conv1);
 
     model.initPara(options.model_para_path);

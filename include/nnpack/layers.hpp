@@ -59,6 +59,7 @@ class ConvLayer: public Layer {
     struct nnp_size _output_size;
     struct nnp_size _kernel_size;
     struct nnp_size _stride;
+    bool _relu;
     ConvLayer(DataType* input,
             const size_t input_channels,
             const size_t output_channels,
@@ -66,6 +67,7 @@ class ConvLayer: public Layer {
             const size_t input_padding,
             const size_t kernel_size,
             const size_t stride,
+            const bool relu,
             const string name) {
         std::cout << "==> Build Layer [" << name << "]\n";
         // configure
@@ -77,6 +79,7 @@ class ConvLayer: public Layer {
             input_padding, input_padding };
         _kernel_size = (struct nnp_size) {kernel_size, kernel_size};
         _stride = (struct nnp_size) {stride, stride};
+        _relu = relu;
         _name = name;
 
         _input = input;
@@ -99,16 +102,18 @@ class ConvLayer: public Layer {
         std::cout << "==> Layer " << _name << " forward" << std::endl;
         enum nnp_status status = nnp_status_success;
         status = nnp_convolution_inference(
-                nnp_convolution_algorithm_implicit_gemm, nnp_convolution_transform_strategy_compute,
+                nnp_convolution_algorithm_implicit_gemm,
+                nnp_convolution_transform_strategy_compute,
                 _input_channels, _output_channels,
                 _input_size, _input_padding, _kernel_size, _stride,
-                _input, _kernel, _bias,
-                _output,
+                _input, _kernel, _bias, _output,
                 NULL, NULL,
-                nnp_activation_identity, NULL,
+                _relu? nnp_activation_relu : nnp_activation_identity,
+                NULL,
                 _threadpool, NULL);
         if (status != nnp_status_success) {
-            std::cerr << "Error: compuation of layer [" << _name << "] failed" << std::endl;
+            std::cerr << "Error: compuation of layer ["
+                << _name << "] failed" << std::endl;
             exit(1);
         }
     };
